@@ -1,0 +1,294 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* === CARROUSEL FIXE RÉDUIT === */
+.carousel {
+    max-width: 900px; /* largeur réduite */
+    margin: 0 auto;
+    max-height: 450px; /* hauteur réduite */
+    overflow: hidden;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    display: none;
+}
+
+.carousel-inner,
+.carousel-item {
+    height: 500px;
+}
+
+.carousel-item img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+/* Responsive : hauteur réduite sur mobiles */
+@media (max-width: 768px) {
+    .carousel-inner,
+    .carousel-item {
+        height: 250px;
+    }
+}
+
+.service-text {
+    font-size: 1.25rem;
+    color: #3c3c3c;
+    line-height: 1.8;
+    font-family: "Playfair Display", serif;
+    text-align: justify;
+    background: #f9f9f9;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.service-text .highlight {
+    color: #a2674a;
+    font-weight: 600;
+}
+
+.marquee-container {
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    font-family: "Playfair Display", serif;
+    max-width: 900px;
+    margin: 0 auto;
+    color: #444;
+}
+
+.marquee-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scrollText 20s linear infinite;
+    font-size: 1.15rem;
+    letter-spacing: 0.4px;
+    font-weight: 500;
+}
+
+@keyframes scrollText {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animated-service {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.animated-service.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.service-text {
+    color: #444;
+    line-height: 1.7;
+}
+
+.accueil-text-container {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 2rem 3rem;
+    border-radius: 12px;
+    max-width: 700px;
+    user-select: none;
+    margin-bottom: 2rem;
+}
+
+.accueil-text-container h1 {
+    font-family: "Playfair Display", serif;
+    font-weight: 800;
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.accueil-text-container p {
+    font-size: 1.4rem;
+    margin-bottom: 2.5rem;
+    max-width: 700px;
+    font-style: italic;
+    font-weight: 500;
+}
+
+/* Bouton principal */
+#accueil .btn-primary {
+    background-color: #000;
+    border: none;
+    font-weight: 600;
+    padding: 0.85rem 2.5rem;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+    color: #fff;
+}
+
+#accueil .btn-primary:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Grille d'images */
+.image-grid-section {
+    padding: 3rem 1rem;
+    background-color: #fff;
+    text-align: center;
+}
+
+.image-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.image-grid-wrapper img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-grid-wrapper img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #accueil h1 {
+        font-size: 2.8rem;
+    }
+
+    #accueil p {
+        font-size: 1.1rem;
+    }
+
+    .image-grid-wrapper img {
+        height: 180px;
+    }
+
+    .card-img-top {
+        height: 180px !important;
+        object-fit: cover;
+    }
+
+    .carousel-inner,
+    .carousel-item {
+        height: 300px !important;
+    }
+}
+
+/* Section Articles */
+#articles {
+    padding: 4rem 2rem;
+}
+
+#articles h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Section Contact */
+#contact {
+    padding: 4rem 2rem;
+    background-color: #f9f9f9;
+}
+
+#contact h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Footer */
+footer {
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.95rem;
+    margin-top: 3rem;
+    clear: both;
+    position: relative;
+    z-index: 0;
+    flex-shrink: 0;
+}
+
+/* Navbar styling */
+nav {
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #000;
+    z-index: 1030;
+}
+
+nav .navbar-brand {
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #000 !important;
+}
+
+nav .nav-link {
+    color: #000 !important;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: color 0.3s ease;
+}
+
+nav .nav-link:hover,
+nav .nav-link:focus {
+    color: #555 !important;
+}
+
+/* Style personnalisé pour le lien actif */
+.custom-active {
+    color: #020202 !important;
+    position: relative;
+    font-weight: bold;
+}
+
+.custom-active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 2px;
+    background-color: #000000;
+    border-radius: 1px;
+    transition: width 0.3s ease;
+}
