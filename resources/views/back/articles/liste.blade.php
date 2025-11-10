@@ -3,21 +3,23 @@
 @section('content')
 
 <div class="container mt-5">
+    <!-- Titre -->
     <h2 class="mb-4 text-center fw-bold text-primary">Tous Les Articles</h2>
 
-    <div class="mb-3 text-center">
-
-        <a href="{{ route('back.articles.create') }}" class="btn btn-success fw-bold">
-            ➕ Ajouter un article
+    <!-- Bouton Ajouter -->
+    <div class="mb-4 d-flex justify-content-center gap-2">
+        <a href="{{ route('back.articles.create') }}" class="btn btn-success btn-sm fw-bold shadow-sm px-4">
+            <i class="fas fa-plus me-2"></i> Ajouter un article
         </a>
-        <!-- <div class="text-muted fst-italic small">Total : {{ $articles->total() }} articles</div>  -->
+        <!-- <div class="text-muted fst-italic small">Total : {{ $articles->total() }} articles</div> -->
     </div>
 
-    <div class="table-responsive shadow-sm rounded">
-        <table class="table table-hover align-middle mb-0">
+    <!-- Tableau -->
+    <div class="table-responsive shadow-sm rounded card p-3">
+        <table class="table table-hover table-striped align-middle mb-0">
             <thead class="table-dark text-center">
                 <tr>
-                    <th style="width: 8%;">#</th>
+                    <th style="width: 6%;">#</th>
                     <th style="width: 20%;">Nom de l'Article</th>
                     <th>Description</th>
                     <th style="width: 10%;">Image</th>
@@ -46,11 +48,13 @@
                     </td>
                     <td>
                         <div class="d-flex gap-2 justify-content-center">
-                            <a href="{{ route('back.articles.show', $article->id) }}" class="btn btn-sm btn-info shadow-sm" title="Voir">
-                                👁
+                            <a href="{{ route('back.articles.show', $article->id) }}"
+                                class="btn btn-sm btn-info shadow-sm" title="Voir">
+                                <i class="fas fa-eye"></i>
                             </a>
-                            <a href="{{ route('back.articles.edit', $article->id) }}" class="btn btn-sm btn-warning shadow-sm" title="Modifier">
-                                ✏
+                            <a href="{{ route('back.articles.edit', $article->id) }}"
+                                class="btn btn-sm btn-warning shadow-sm" title="Modifier">
+                                <i class="fas fa-edit"></i>
                             </a>
 
                             <form action="{{ route('back.articles.destroy', $article->id) }}" method="POST" class="d-inline">
@@ -60,7 +64,7 @@
                                     class="btn btn-sm btn-danger shadow-sm"
                                     title="Supprimer"
                                     onclick="return confirm('Voulez-vous vraiment supprimer cet article ?')">
-                                    🗑
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>
                         </div>

@@ -1,33 +1,40 @@
 @extends('front.layout.index')
-@section('content')
 
-<section id="articles" class="py-4 bg-light">
+@section('content')
+<section id="articles" class="py-5 bg-white">
     <div class="container">
-        <h2 class="text-center mb-4 fw-bold" style="font-family: 'Playfair Display', serif; font-size: 1.8rem;">Nos Articles</h2>
+        <h2 class="text-center mb-4 fw-bold" style="font-family: 'Playfair Display', serif; font-size: 1.8rem;">
+            Nos Articles
+        </h2>
 
         <!-- Barre de recherche -->
         <div class="row mb-4 justify-content-center">
             <div class="col-md-6">
                 <form action="{{ route('front.articles') }}" method="GET" class="d-flex">
-                    <input type="text" name="search" class="form-control me-2" placeholder="Rechercher un article..."
+                    <input type="text" name="search" class="form-control me-2"
+                        placeholder="Rechercher un article..."
                         value="{{ request('search') }}">
-                    <button type="submit" class="btn btn-outline-primary">Rechercher</button>
+                    <button type="submit" class="btn btn-outline-dark">Rechercher</button>
                 </form>
             </div>
         </div>
 
-        <div class="row g-3 justify-content-center">
+        <div class="row g-4 justify-content-center">
             @forelse ($articles as $article)
             <div class="col-md-4 col-sm-6">
-                <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 300px;">
-                    <div class="bg-white p-2 rounded-top-3" style="height: 220px; display: flex; justify-content: center; align-items: center;">
-                        <img src="{{ asset('storage/' . $article->image) }}" class="img-fluid" alt="{{ $article->titre }}" style="max-height: 100%; object-fit: contain;">
+                <div class="card border-0 shadow-sm rounded-4 mx-auto transition-hover" style="max-width: 300px;">
+                    <div class="bg-white p-2 rounded-top-4 d-flex justify-content-center align-items-center" style="height: 220px;">
+                        <img src="{{ asset('storage/' . $article->image) }}" class="img-fluid"
+                            alt="{{ $article->titre }}" style="max-height: 100%; object-fit: contain;">
                     </div>
-                    <div class="card-body text-center p-2">
-                        <h6 class="card-title fw-bold mb-1">{{ $article->titre }}</h6>
+                    <div class="card-body text-center p-3">
+                        <h6 class="card-title fw-bold mb-1 text-dark">{{ $article->titre }}</h6>
                         <p class="card-text text-muted small mb-1">{{ $article->description }}</p>
-                        <p class="text-primary fw-semibold mb-2" style="font-size: 0.95rem;">{{ number_format($article->prix, 0, ',', ' ') }} FCFA</p>
-                        <button class="btn btn-sm btn-outline-primary rounded-pill ajouter-au-panier" data-id="{{ $article->id }}">
+                        <p class="text-dark fw-semibold mb-2" style="font-size: 0.95rem;">
+                            {{ number_format($article->prix, 0, ',', ' ') }} FCFA
+                        </p>
+                        <button class="btn btn-sm btn-outline-dark rounded-pill ajouter-au-panier"
+                            data-id="{{ $article->id }}">
                             Ajouter au panier
                         </button>
                     </div>
@@ -38,7 +45,7 @@
             @endforelse
         </div>
 
-        {{-- Pagination si besoin --}}
+        {{-- Pagination --}}
         <div class="mt-4 d-flex justify-content-center">
             {{ $articles->appends(request()->all())->links() }}
         </div>
@@ -47,20 +54,41 @@
 
 <!-- Toast de confirmation -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-    <div id="toastPanier" class="toast align-items-center text-bg-success border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="toastPanier" class="toast align-items-center text-bg-dark border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
-            <div class="toast-body">
+            <div class="toast-body text-white">
                 ✅ Article ajouté au panier !
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast" aria-label="Fermer"></button>
         </div>
     </div>
 </div>
 
-@section('scripts')
+{{-- Styles --}}
+<style>
+    .transition-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .transition-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-outline-dark:hover {
+        background-color: #000;
+        color: #fff;
+        border-color: #000;
+    }
+</style>
+@endsection
+
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const boutonsAjouter = document.querySelectorAll('.ajouter-au-panier');
+        const toastEl = document.getElementById('toastPanier');
 
         boutonsAjouter.forEach(btn => {
             btn.addEventListener('click', function() {
@@ -79,11 +107,17 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            const toastEl = document.getElementById('toastPanier');
+                            // ✅ Afficher le toast
                             const toast = new bootstrap.Toast(toastEl, {
                                 delay: 3000
                             });
                             toast.show();
+
+                            // ✅ Mettre à jour le compteur panier si présent
+                            const panierCount = document.getElementById('panier-count');
+                            if (panierCount) {
+                                panierCount.textContent = data.count;
+                            }
                         } else {
                             alert("Une erreur s'est produite.");
                         }
@@ -95,6 +129,4 @@
         });
     });
 </script>
-@endsection
-
-@endsection
+@endpush

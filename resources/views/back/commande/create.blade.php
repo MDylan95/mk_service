@@ -23,6 +23,7 @@
             <form action="{{ route('commandes.store') }}" method="POST">
                 @csrf
 
+                {{-- Infos client --}}
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="nom" class="form-label">Nom</label>
@@ -45,6 +46,7 @@
                     </div>
                 </div>
 
+                {{-- Section Articles --}}
                 <div class="mt-4">
                     <h5 class="text-secondary fw-bold">Articles</h5>
                     <p class="text-muted">Sélectionnez les articles à ajouter à la commande :</p>
@@ -52,7 +54,7 @@
                     <div class="row">
                         @foreach ($articles as $article)
                         <div class="col-md-6 col-lg-4 mb-4">
-                            <div class="border rounded p-3 h-100 d-flex flex-column shadow-sm">
+                            <div class="border rounded p-3 h-100 d-flex flex-column shadow-sm article-item">
                                 <div class="d-flex align-items-center mb-2">
                                     <img src="{{ asset('storage/' . $article->image) }}"
                                         alt="{{ $article->titre }}"
@@ -65,7 +67,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-check mb-2">
+                                <div class="form-check mb-2 mt-auto">
                                     <input
                                         class="form-check-input article-checkbox"
                                         type="checkbox"
@@ -77,7 +79,7 @@
                                     </label>
                                 </div>
 
-                                <div class="d-flex align-items-center mt-auto">
+                                <div class="d-flex align-items-center mt-2">
                                     <label for="quantite_{{ $article->id }}" class="me-2 mb-0">Quantité :</label>
                                     <input
                                         type="number"
@@ -97,6 +99,7 @@
                     </div>
                 </div>
 
+                {{-- Livraison --}}
                 <div class="form-check mb-4">
                     <input class="form-check-input" type="checkbox" value="1" id="livree" name="livree" {{ old('livree') ? 'checked' : '' }}>
                     <label class="form-check-label" for="livree">
@@ -104,6 +107,7 @@
                     </label>
                 </div>
 
+                {{-- Boutons --}}
                 <div class="d-flex justify-content-between">
                     <a href="{{ route('commandes.index') }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Annuler
@@ -121,7 +125,8 @@
 <script>
     document.querySelectorAll('.article-checkbox').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
-            const quantityInput = this.closest('.border').querySelector('.article-quantity');
+            // On cherche la quantité dans le même article-item
+            const quantityInput = this.closest('.article-item').querySelector('.article-quantity');
             quantityInput.disabled = !this.checked;
             if (!this.checked) quantityInput.value = 1;
         });

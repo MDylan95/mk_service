@@ -8,12 +8,18 @@ use Illuminate\Support\Facades\Storage;
 
 class ParametreController extends Controller
 {
+    /**
+     * Affiche la page générale des paramètres.
+     */
     public function parametres()
     {
-        $admin = auth()->user();
+        $admin = auth()->user(); // récupère l'admin connecté
         return view('back.parametres', compact('admin'));
     }
 
+    /**
+     * Met à jour les paramètres généraux (email, mot de passe, avatar).
+     */
     public function updateParametres(Request $request)
     {
         $admin = auth()->user();
@@ -30,11 +36,24 @@ class ParametreController extends Controller
             $admin->password = bcrypt($request->password);
         }
 
+        if ($request->hasFile('avatar')) {
+            // Supprimer l'ancien avatar si existant
+            if ($admin->avatar && Storage::disk('public')->exists($admin->avatar)) {
+                Storage::disk('public')->delete($admin->avatar);
+            }
+
+            // Sauvegarder le nouvel avatar
+            $admin->avatar = $request->file('avatar')->store('avatars', 'public');
+        }
+
         $admin->save();
 
         return redirect()->route('admin.parametres')->with('success', 'Paramètres mis à jour avec succès.');
     }
 
+    /**
+     * Affiche la page du carrousel.
+     */
     public function carrousel()
     {
         // Initialise les 3 slides s’ils n’existent pas
@@ -49,6 +68,9 @@ class ParametreController extends Controller
         return view('back.carousel', compact('slides'));
     }
 
+    /**
+     * Met à jour les images du carrousel.
+     */
     public function updateCarrousel(Request $request)
     {
         foreach ([1, 2, 3] as $i) {
@@ -58,16 +80,14 @@ class ParametreController extends Controller
                 $slide = Carousel::where('position', $i)->first();
 
                 // Supprimer l'ancienne image si existante
-                if ($slide && $slide->image_path) {
-                    if (Storage::disk('public')->exists($slide->image_path)) {
-                        Storage::disk('public')->delete($slide->image_path);
-                    }
+                if ($slide && $slide->image_path && Storage::disk('public')->exists($slide->image_path)) {
+                    Storage::disk('public')->delete($slide->image_path);
                 }
 
-                // Sauvegarder la nouvelle image dans storage/app/public/carousel
+                // Sauvegarder la nouvelle image
                 $path = $file->store('carousel', 'public');
 
-                // Mise à jour ou création avec chemin relatif
+                // Mettre à jour ou créer le slide
                 Carousel::updateOrCreate(
                     ['position' => $i],
                     ['image_path' => $path]
@@ -76,5 +96,39 @@ class ParametreController extends Controller
         }
 
         return back()->with('success', 'Carrousel mis à jour.');
+    }
+
+    /**
+     * Affiche la page des paramètres du compte (nom, email, mot de passe).
+     */
+    public function compte()
+    {
+        $admin = auth()->user(); // admin connecté
+        return view('back.compte', compact('admin'));
+    }
+
+    /**
+     * Met à jour les informations du compte de l'admin.
+     */
+    public function updateCompte(Request $request)
+    {
+        $admin = auth()->user();
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:utilisateurs,email,' . $admin->id,
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $admin->name = $data['name'];
+        $admin->email = $data['email'];
+
+        if (!empty($data['password'])) {
+            $admin->password = bcrypt($data['password']);
+        }
+
+        $admin->save();
+
+        return redirect()->route('admin.parametres.compte')->with('success', 'Compte mis à jour avec succès !');
     }
 }

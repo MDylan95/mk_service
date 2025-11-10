@@ -3,18 +3,18 @@
 @section('content')
 
 <div class="container mt-5">
-    <h2 class="mb-4 text-center">📩 Mes Messages</h2>
+    <h2 class="mb-4 text-center fw-bold text-primary">📩 Mes Messages</h2>
 
     @if(session('success'))
-    <div class="alert alert-success">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
     </div>
     @endif
 
-    @if($contacts->count())
-    <div class="table-responsive shadow-sm rounded">
-        <table class="table table-hover align-middle">
-            <thead class="table-dark">
+    <div class="table-responsive shadow-sm rounded card p-3">
+        <table class="table table-hover table-striped align-middle mb-0">
+            <thead class="table-dark text-center">
                 <tr>
                     <th>#</th>
                     <th>Nom</th>
@@ -26,9 +26,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($contacts as $contact)
+                @forelse($contacts as $contact)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
+                    <td class="text-center">{{ $loop->iteration }}</td>
                     <td>
                         {{ $contact->nom }}
                         @if($contact->created_at->diffInHours(now()) < 24)
@@ -38,33 +38,40 @@
                     <td>{{ $contact->prenom }}</td>
                     <td>{{ $contact->telephone }}</td>
                     <td>{{ \Illuminate\Support\Str::limit($contact->message, 40, '...') }}</td>
-                    <td>{{ $contact->created_at->format('d M Y à H:i') }}</td>
+                    <td class="text-center">{{ $contact->created_at->format('d M Y à H:i') }}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary mb-1 w-100 voir-btn"
-                            data-nom="{{ $contact->nom }}"
-                            data-prenom="{{ $contact->prenom }}"
-                            data-telephone="{{ $contact->telephone }}"
-                            data-message="{{ e($contact->message) }}"
-                            data-date="{{ $contact->created_at->format('d/m/Y à H:i') }}">
-                            👀 Voir
-                        </button>
+                        <div class="d-grid gap-1">
+                            <button class="btn btn-sm btn-info voir-btn"
+                                data-nom="{{ $contact->nom }}"
+                                data-prenom="{{ $contact->prenom }}"
+                                data-telephone="{{ $contact->telephone }}"
+                                data-message="{{ e($contact->message) }}"
+                                data-date="{{ $contact->created_at->format('d/m/Y à H:i') }}">
+                                👀 Voir
+                            </button>
 
-                        <button class="btn btn-sm btn-danger w-100 supprimer-btn" data-id="{{ $contact->id }}">
-                            🗑 Supprimer
-                        </button>
+                            <button class="btn btn-sm btn-danger supprimer-btn" data-id="{{ $contact->id }}">
+                                🗑 Supprimer
+                            </button>
+                        </div>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center text-muted fst-italic">
+                        Aucun message reçu pour le moment.
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
 
+    <!-- Pagination -->
+    @if($contacts->hasPages())
     <div class="d-flex justify-content-center mt-4">
         {{ $contacts->links('pagination::bootstrap-5') }}
     </div>
-
-    @else
-    <div class="text-center text-muted mt-5">Aucun message reçu pour le moment.</div>
     @endif
 </div>
 
@@ -72,6 +79,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // Voir message
     document.querySelectorAll('.voir-btn').forEach(button => {
         button.addEventListener('click', function() {
             const nom = this.dataset.nom;
@@ -92,10 +100,10 @@
         });
     });
 
+    // Supprimer message
     document.querySelectorAll('.supprimer-btn').forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
-
             const id = this.dataset.id;
             const btn = this;
             btn.disabled = true;

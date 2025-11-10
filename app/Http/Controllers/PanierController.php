@@ -35,8 +35,53 @@ class PanierController extends Controller
 
         session(['panier' => $panier]);
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'count' => array_sum(array_column($panier, 'quantite'))
+        ]);
     }
+
+    public function valider(Request $request)
+    {
+        $data = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'lieu_livraison' => 'required|string|max:255',
+        ]);
+
+        $panier = session()->get('panier', []);
+
+        if (empty($panier)) {
+            return redirect()->route('front.articles')->with('error', 'Votre panier est vide.');
+        }
+
+        $quantiteTotale = array_sum(array_column($panier, 'quantite'));
+
+        $commande = Commande::create([
+            'nom' => $data['nom'],
+            'prenom' => $data['prenom'],
+            'telephone' => $data['telephone'],
+            'lieu_livraison' => $data['lieu_livraison'],
+            'quantite' => $quantiteTotale,
+            'lu' => false, // garde seulement si cette colonne existe
+        ]);
+
+        foreach ($panier as $articleId => $item) {
+            $commande->articles()->attach($articleId, [
+                'quantite' => $item['quantite'],
+                'prix_unitaire' => $item['prix'],
+            ]);
+        }
+
+        session()->forget('panier');
+
+        return redirect()->route('panier.index')->with(
+            'commande_success',
+            'Votre commande a bien été enregistrée ! Un conseiller client vous contactera dans les plus brefs délais.'
+        );
+    }
+
 
     public function modifier(Request $request, $id)
     {
@@ -75,45 +120,6 @@ class PanierController extends Controller
         return view('front.panier.index', compact('panier'));
     }
 
-    public function valider(Request $request)
-    {
-        $data = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'telephone' => 'required|string|max:20',
-            'lieu_livraison' => 'required|string|max:255',
-        ]);
-
-        $panier = session()->get('panier', []);
-
-        if (empty($panier)) {
-            return redirect()->route('front.article')->with('error', 'Votre panier est vide.');
-        }
-
-        $quantiteTotale = array_sum(array_column($panier, 'quantite'));
-
-        $commande = Commande::create([
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'telephone' => $data['telephone'],
-            'lieu_livraison' => $data['lieu_livraison'],
-            'quantite' => $quantiteTotale,
-            'lu' => false,
-        ]);
-
-        foreach ($panier as $articleId => $item) {
-            $commande->articles()->attach($articleId, [
-                'quantite' => $item['quantite'],
-                'prix_unitaire' => $item['prix'],
-            ]);
-        }
-
-        // ✅ Vider le panier
-        session()->forget('panier');
-
-        // ✅ Rediriger vers le panier avec un message de succès spécifique
-        return redirect()->route('panier.index')->with('commande_success', 'Votre commande a bien été enregistrée ! Un conseiller client vous contactera dans les plus brefs délais.');
-    }
 
     public function vider()
     {

@@ -6,12 +6,12 @@
     <h2 class="mb-4 text-center fw-bold text-primary">📦 Mes Commandes</h2>
 
     <div class="mb-3 d-flex justify-content-center align-items-center gap-3 flex-wrap">
-        <a href="{{ route('commandes.create') }}" class="btn btn-success fw-bold">
+        <a href="{{ route('commandes.create') }}" class="btn btn-success fw-bold shadow-sm">
             ➕ Ajouter une commande
         </a>
 
         <form id="filterForm" method="GET" action="{{ route('commandes.index') }}" class="m-0">
-            <select name="type" id="typeFilter" class="form-select w-auto" aria-label="Filtrer par type">
+            <select name="type" id="typeFilter" class="form-select w-auto shadow-sm" aria-label="Filtrer par type">
                 <option value="">Tous les types</option>
                 <option value="site" {{ request('type') === 'site' ? 'selected' : '' }}>Site</option>
                 <option value="admin" {{ request('type') === 'admin' ? 'selected' : '' }}>Admin</option>
@@ -21,7 +21,7 @@
 
     <div class="table-responsive shadow rounded p-3 bg-white">
         <table class="table table-hover align-middle table-bordered">
-            <thead class="table-dark">
+            <thead class="table-dark text-center">
                 <tr>
                     <th>#</th>
                     <th>Client</th>
@@ -45,9 +45,7 @@
                 'quantite' => $a->pivot->quantite,
                 ];
                 });
-
                 $tarifTotal = $commande->articles->sum(fn($a) => $a->pivot->prix_unitaire * $a->pivot->quantite);
-
                 $typeLabel = match($commande->type) {
                 'admin' => 'Admin',
                 'site' => 'Site',
@@ -55,16 +53,16 @@
                 };
                 @endphp
                 <tr>
-                    <td>{{ $loop->iteration + ($commandes->currentPage() - 1) * $commandes->perPage() }}</td>
+                    <td class="text-center">{{ $loop->iteration + ($commandes->currentPage() - 1) * $commandes->perPage() }}</td>
                     <td>
                         <strong>{{ $commande->nom }}</strong><br>
                         <small class="text-muted">{{ $commande->prenom }}</small>
                     </td>
                     <td>{{ $commande->telephone }}</td>
                     <td>{{ $commande->lieu_livraison }}</td>
-                    <td>{{ $commande->created_at->format('d/m/Y H:i') }}</td>
-                    <td><span class="badge bg-info text-dark">{{ $typeLabel }}</span></td>
-                    <td style="min-width: 180px;">
+                    <td class="text-center">{{ $commande->created_at->format('d/m/Y H:i') }}</td>
+                    <td class="text-center"><span class="badge bg-info text-dark">{{ $typeLabel }}</span></td>
+                    <td style="min-width: 200px;">
                         @if ($commande->articles->isNotEmpty())
                         <ul class="list-unstyled mb-0 d-flex flex-wrap gap-2">
                             @foreach ($commande->articles as $article)
@@ -81,40 +79,40 @@
                         <span class="text-muted small fst-italic">Aucun</span>
                         @endif
                     </td>
-                    <td>
+                    <td class="text-center">
                         @if ($commande->livree)
                         <span class="badge bg-success">Oui</span>
                         @else
                         <span class="badge bg-secondary">Non</span>
                         @endif
                     </td>
-                    <td style="min-width: 140px;">
-                        <button type="button" class="btn btn-sm btn-outline-info mb-1 w-100 voir-btn"
-                            data-nom="{{ $commande->nom }}"
-                            data-prenom="{{ $commande->prenom }}"
-                            data-telephone="{{ $commande->telephone }}"
-                            data-quantite="{{ $commande->quantite }}"
-                            data-lieu="{{ $commande->lieu_livraison }}"
-                            data-total="{{ number_format($tarifTotal, 2, '.', '') }}"
-                            data-articles='@json($articlesData)'>
-                            👁️ Voir
-                        </button>
-
-                        <form method="POST" action="{{ route('admin.commandes.destroy', $commande->id) }}" class="d-inline delete-form" onsubmit="return false;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger w-100 mt-1">
-                                🗑 Supprimer
+                    <td style="min-width: 160px;">
+                        <div class="d-grid gap-1">
+                            <button type="button" class="btn btn-sm btn-outline-info voir-btn"
+                                data-nom="{{ $commande->nom }}"
+                                data-prenom="{{ $commande->prenom }}"
+                                data-telephone="{{ $commande->telephone }}"
+                                data-quantite="{{ $commande->quantite }}"
+                                data-lieu="{{ $commande->lieu_livraison }}"
+                                data-total="{{ number_format($tarifTotal, 2, '.', '') }}"
+                                data-articles='@json($articlesData)'>
+                                👁️ Voir
                             </button>
-                        </form>
 
-                        <form action="{{ route('commandes.toggleLivree', $commande) }}" method="POST" class="mt-1">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit" class="btn btn-sm btn-outline-{{ $commande->livree ? 'secondary' : 'success' }} w-100">
-                                {{ $commande->livree ? '↩️ Marquer non livrée' : '✅ Marquer livrée' }}
-                            </button>
-                        </form>
+                            <form method="POST" action="{{ route('admin.commandes.destroy', $commande->id) }}" class="delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">🗑 Supprimer</button>
+                            </form>
+
+                            <form action="{{ route('commandes.toggleLivree', $commande) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-sm btn-outline-{{ $commande->livree ? 'secondary' : 'success' }}">
+                                    {{ $commande->livree ? '↩️ Marquer non livrée' : '✅ Marquer livrée' }}
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty
@@ -146,9 +144,7 @@
                 confirmButtonText: 'Oui, supprimer',
                 cancelButtonText: 'Annuler'
             }).then(result => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+                if (result.isConfirmed) form.submit();
             });
         });
     });
@@ -179,7 +175,7 @@
                     <hr>
                     ${articleHtml}
                 `,
-                width: 600,
+                width: 650,
                 showCloseButton: true,
                 focusConfirm: false,
                 confirmButtonText: 'Fermer'
@@ -187,7 +183,7 @@
         });
     });
 
-    // Filtrage instantané par type
+    // Filtrage instantané
     document.getElementById('typeFilter').addEventListener('change', function() {
         document.getElementById('filterForm').submit();
     });

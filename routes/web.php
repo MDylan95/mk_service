@@ -24,7 +24,6 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('front.conta
 // Routes publiques panier (client)
 Route::get('/panier', [PanierController::class, 'index'])->name('panier.index');
 Route::post('/panier/ajouter', [PanierController::class, 'ajouter'])->name('panier.ajouter');
-Route::post('/panier/modifier/{id}', [PanierController::class, 'modifier'])->name('panier.modifier');
 Route::get('/panier/supprimer/{id}', [PanierController::class, 'supprimer'])->name('panier.supprimer');
 Route::get('/panier/vider', [PanierController::class, 'vider'])->name('panier.vider');
 Route::get('/panier/valider', [PanierController::class, 'afficherFormulaireCommande'])->name('panier.valider.form');
@@ -59,7 +58,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::post('/administrateur/commandes', [CommandeController::class, 'store'])->name('commandes.store');
     Route::get('/administrateur/commandes/{id}/edit', [CommandeController::class, 'edit'])->name('commandes.edit');
     Route::put('/administrateur/commandes/{id}', [CommandeController::class, 'update'])->name('commandes.update');
- 
+
     // Pour basculer l'état livraison
     Route::patch('/{commande}/toggle-livree', [CommandeController::class, 'toggleLivree'])->name('commandes.toggleLivree');
 
@@ -69,6 +68,7 @@ Route::middleware(['admin.auth'])->group(function () {
 
     // Paramètres de l'administration
     Route::get('/administrateur/parametres', [ParametreController::class, 'parametres'])->name('admin.parametres');
+
     Route::post('/administrateur/parametres', [ParametreController::class, 'updateParametres'])->name('admin.parametres.update');
     Route::put('/administrateur/parametres', [ParametreController::class, 'updateParametres'])->name('admin.parametres.update');
 
@@ -77,4 +77,7 @@ Route::middleware(['admin.auth'])->group(function () {
 
     Route::get('message_diffusion/edit', [MessageDiffusionController::class, 'edit'])->name('admin.message_diffusion.edit');
     Route::post('message_diffusion/update', [MessageDiffusionController::class, 'update'])->name('admin.message_diffusion.update');
+
+    Route::get('/administrateur/parametres/compte', [ParametreController::class, 'compte'])->name('admin.parametres.compte');
+    Route::post('/administrateur/parametres/compte', [ParametreController::class, 'updateCompte'])->name('admin.parametres.compte.update');
 });

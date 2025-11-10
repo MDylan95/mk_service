@@ -40,6 +40,13 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins', // ← provider correct
+        ],
+
+
     ],
 
     /*
@@ -69,6 +76,11 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Utilisateur::class, // ici ton modèle Admin ou Utilisateur
+        ],
     ],
 
     /*

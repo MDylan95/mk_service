@@ -10,7 +10,7 @@
 
     <title>MK_Service</title>
 
-    <link rel="icon" type="image/png" href="{{ asset('Images/logo.jpg') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('Images/logo.png') }}" />
 
     <!-- Fonts et styles -->
     <link href="{{ asset('dashboard/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -31,7 +31,7 @@
 
             <!-- Logo -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
-                <img src="{{ asset('images/logo.jpg') }}" alt="Logo Ventoo" width="70" height="70" class="rounded-circle shadow border border-white p-1 bg-white">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo Ventoo" width="70" height="70" class="rounded-circle shadow border border-white p-1 bg-white">
             </a>
 
             <hr class="sidebar-divider my-0">
@@ -65,32 +65,13 @@
                 </a>
             </li>
 
-            <li class="nav-item {{ request()->is('administrateur/parametres*') || request()->is('administrateur/message_diffusion*') ? 'active' : '' }}">
-                <a class="nav-link collapsed" href="#" role="button" data-bs-toggle="collapse" data-bs-target="#collapseParametres"
-                    aria-expanded="{{ request()->is('administrateur/parametres*') || request()->is('administrateur/message_diffusion*') ? 'true' : 'false' }}"
-                    aria-controls="collapseParametres">
+            <li class="nav-item {{ request()->is('administrateur/parametres*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin.parametres') }}">
                     <i class="fas fa-fw fa-cog"></i>
                     <span>Paramètres</span>
-                    <i class="fas fa-chevron-down ms-auto"></i> <!-- Bootstrap 5 : ms-auto pour pousser à droite -->
                 </a>
-                <div id="collapseParametres" class="collapse {{ request()->routeIs('admin.parametres*') || request()->routeIs('admin.message_diffusion.*') ? 'show' : '' }}">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Gestion des paramètres</h6>
-                        <a class="collapse-item {{ request()->routeIs('admin.parametres.carrousel') ? 'active' : '' }}" href="{{ route('admin.parametres.carrousel') }}">
-                            Images d'Accueil
-                        </a>
-
-                        <a class="collapse-item {{ request()->routeIs('admin.message_diffusion.edit') ? 'active' : '' }}" href="{{ route('admin.message_diffusion.edit') }}">
-                            Message de diffusion
-                        </a>
-
-                        <a class="collapse-item {{ request()->routeIs('admin.parametres') ? 'active' : '' }}" href="{{ route('admin.parametres') }}">
-                            Paramètres du compte
-                        </a>
-
-                    </div>
-                </div>
             </li>
+
 
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -123,7 +104,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="img-profile rounded-circle" src="{{ asset('images/logo.jpg') }}"
+                                <img class="img-profile rounded-circle" src="{{ asset('images/logo.png') }}"
                                     width="40" height="40" alt="Admin Logo">
                             </a>
 
@@ -193,6 +174,7 @@
     <script src="//unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 
+    @stack('scripts')
 
 </body>
 
